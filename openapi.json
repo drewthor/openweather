@@ -109,7 +109,9 @@
           },
           "conditions": {
             "type": "array",
-            "format": "string"
+            "items": {
+              "type": "string"
+            }
           },
           "temperature_type": {
             "$ref": "#/components/schemas/temperature type"
