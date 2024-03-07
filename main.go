@@ -14,6 +14,10 @@ import (
 	"github.com/drewthor/openweather/weather"
 )
 
+const (
+	DefaultPort = 3000
+)
+
 type config struct {
 	Port              int
 	OpenWeatherAPIKey string
@@ -22,8 +26,18 @@ type config struct {
 func main() {
 	var cfg config
 
-	cfg.Port, _ = strconv.Atoi(os.Getenv("PORT"))
+	var err error
+	cfg.Port, err = strconv.Atoi(os.Getenv("PORT"))
+	if err != nil {
+		log.Fatal("invalid PORT: must be an integer")
+	}
+	if cfg.Port == 0 {
+		cfg.Port = DefaultPort
+	}
 	cfg.OpenWeatherAPIKey = os.Getenv("OPEN_WEATHER_API_KEY")
+	if cfg.OpenWeatherAPIKey == "" {
+		log.Fatal("OPEN_WEATHER_API_KEY is required to be set in environment")
+	}
 
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
@@ -76,6 +90,6 @@ func main() {
 	}
 
 	logger.Info(fmt.Sprintf("starting server on port %d", cfg.Port))
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	logger.ErrorContext(ctx, "server shutdown", slog.Any("error", err.Error()))
 }
