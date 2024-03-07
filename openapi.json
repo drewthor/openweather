@@ -1,0 +1,148 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Weather",
+    "description": "Weather Service",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https"
+    }
+  ],
+  "paths": {
+    "/weather": {
+      "get": {
+        "description": "get current weather at specified location",
+        "parameters": [
+          {
+            "name": "latitude",
+            "in": "query",
+            "required": true,
+            "description": "latitude of the location to get the weather",
+            "schema": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "required": true,
+            "description": "longitude of the location to get the weather",
+            "schema": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          {
+            "name": "unit",
+            "in": "path",
+            "required": true,
+            "description": "unit to be used in the weather response",
+            "schema": {
+              "$ref": "#/components/schemas/unit type"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "current weather at specified location",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": [
+                    {
+                      "$ref": "#/components/schemas/weather data"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": [
+                    {
+                      "$ref": "#/components/schemas/error"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "items": [
+                    {
+                      "$ref": "#/components/schemas/error"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "weather data": {
+        "type": "object",
+        "properties": {
+          "temperature": {
+            "type": "number",
+            "format": "float"
+          },
+          "unit_type": {
+            "$ref": "#/components/schemas/unit type"
+          },
+          "conditions": {
+            "type": "array",
+            "format": "string"
+          },
+          "temperature_type": {
+            "$ref": "#/components/schemas/temperature type"
+          }
+        }
+      },
+      "unit type": {
+        "type": "string",
+        "description": "the type values will be presented in (e.g. temperature scientific->kelvin, imperial->fahrenheit, metric->celsius",
+        "enum": [
+          "scientific",
+          "metric",
+          "imperial"
+        ]
+      },
+      "temperature type": {
+        "type": "string",
+        "description": "how the temperature would be described relatively",
+        "enum": [
+          "hot",
+          "moderate",
+          "cold"
+        ]
+      },
+      "error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "the error that occurred when processing the request"
+          }
+        }
+      }
+    }
+  }
+}
